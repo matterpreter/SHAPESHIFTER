@@ -10,7 +10,7 @@ namespace SHAPESHIFTER
  (_ ` )_) /_) )_) )_  (_ ` )_)  )  )_   )  )_  )_) 
 .__) ( ( / / /   (__ .__) ( ( _(_ (    (  (__ / \  
         ";
-           
+
         static void Main(string[] args)
         {
             bool _help = false;
@@ -27,7 +27,7 @@ namespace SHAPESHIFTER
             {
                 options.Parse(args);
             }
-            catch(OptionException ex)
+            catch (OptionException ex)
             {
                 Console.WriteLine("[-] Error while parsing arguments {0}", ex.Message);
                 return;
@@ -53,7 +53,7 @@ namespace SHAPESHIFTER
 
             return;
         }
-        
+
         static void PrintUsage(OptionSet o)
         {
             Console.WriteLine("Usage: SHAPESHIFTER.exe [options]");

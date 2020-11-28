@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{84FB4A05-E710-4C7C-AEA7-669D8C732A85}</ProjectGuid>
+    <ProjectGuid>{A3DDFCAA-66E7-44FD-AD48-9D80D1651228}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>SHAPESHIFTER</RootNamespace>
     <AssemblyName>SHAPESHIFTER</AssemblyName>
@@ -33,7 +33,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="NDesk.Options, Version=0.2.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\NDesk.Options.0.2.1\lib\NDesk.Options.dll</HintPath>
+      <HintPath>..\packages\NDesk.Options.0.2.1\lib\NDesk.Options.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
