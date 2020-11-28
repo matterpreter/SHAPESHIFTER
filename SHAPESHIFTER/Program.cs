@@ -39,7 +39,6 @@ namespace SHAPESHIFTER
 
             if (_help)
             {
-                Compiler.CompileStage0("a", "b");
                 PrintUsage(options);
                 return;
             }
@@ -53,7 +52,11 @@ namespace SHAPESHIFTER
             Console.ResetColor();
 
             // Build the stage0 payload
-
+            if (!Compiler.CompileStage0(_host, _port))
+            {
+                Console.WriteLine("[-] Failed to compile Stage0 payload. Check your host/port.");
+                return;
+            }
 
             // Start the TCP server
             Thread tcpServer = new Thread(() => TcpServer.ServerInit(_host, _port));
@@ -61,9 +64,5 @@ namespace SHAPESHIFTER
 
             return;
         }
-
-
-
-
     }
 }

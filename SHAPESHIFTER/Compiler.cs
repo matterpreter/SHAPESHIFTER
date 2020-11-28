@@ -7,7 +7,7 @@ namespace SHAPESHIFTER
 {
     class Compiler
     {
-        public static bool CompileStage0(string host, string port)
+        public static bool CompileStage0(string host, int port)
         {
             string sourcePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             string sourceFile = Path.Combine(sourcePath, @"Templates\Stage0Template.cs");
@@ -21,8 +21,8 @@ namespace SHAPESHIFTER
 
             // Replace placeholders with information for the callback
             string template = File.ReadAllText(sourceFile);
-            string modified = template.Replace("[SHAPESHIFTER_HOST]", host);
-            modified = modified.Replace("[SHAPESHIFTER_PORT]", port);
+            string modified = template.Replace(@"[SHAPESHIFTER_HOST]", host);
+            modified = modified.Replace(@"[SHAPESHIFTER_PORT]", port.ToString());
             File.WriteAllText(sourceFile, modified);
 
             CodeDomProvider provider = CodeDomProvider.CreateProvider("CSharp");
@@ -36,8 +36,15 @@ namespace SHAPESHIFTER
                 TreatWarningsAsErrors = false,
                 CompilerOptions = "/unsafe",
                 TempFiles = new TempFileCollection(".", false),
-                MainClass = "Stage0.Program"
+                MainClass = "Stage0.Program"                
             };
+            cParams.ReferencedAssemblies.Add("System.dll");
+            cParams.ReferencedAssemblies.Add("System.Core.dll");
+            cParams.ReferencedAssemblies.Add("System.Data.dll");
+            cParams.ReferencedAssemblies.Add("System.Data.DatasetExtensions.dll");
+            cParams.ReferencedAssemblies.Add("System.Net.dll");
+            cParams.ReferencedAssemblies.Add("System.Xml.dll");
+            cParams.ReferencedAssemblies.Add("System.Xml.Linq.dll");
 
             CompilerResults results = provider.CompileAssemblyFromFile(cParams, sourceFile);
             if (results.Errors.Count == 0)
