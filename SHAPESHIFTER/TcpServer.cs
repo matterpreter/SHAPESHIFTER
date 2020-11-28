@@ -30,13 +30,12 @@ namespace SHAPESHIFTER
 
 
                 server.Start();
-                Console.Write("[+] Server started on {0}:{1}...\n", ip, port);
-                Console.WriteLine("Prepared to receive {0} bytes of data", bytes.Length);
+                Console.Write("[+] Server started on {0}:{1}...\n\n", ip, port);
                 while (true)
                 {
                     // Perform a blocking call to accept requests.
                     TcpClient client = server.AcceptTcpClient();
-                    Console.WriteLine("Connected!");
+                    Console.WriteLine("[+] New connection from {0}", ((IPEndPoint)client.Client.RemoteEndPoint).Address.ToString());
 
                     // Get a stream object for reading and writing
                     NetworkStream stream = client.GetStream();

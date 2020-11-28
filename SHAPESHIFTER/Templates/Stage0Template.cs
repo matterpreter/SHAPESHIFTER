@@ -69,7 +69,7 @@ namespace Stage0
                 if (safe)
                 {
                     Console.WriteLine(fmtFunc + "- SAFE");
-                    HookChecks[i] = 1;
+                    HookChecks[i] = 0;
                 }
                 else
                 {
@@ -83,6 +83,10 @@ namespace Stage0
                 i++;
             }
 
+
+            string data = BitConverter.ToString(HookChecks);
+            //data = System.Text.Encoding.ASCII.GetString(bytes, 0, i);
+            Console.WriteLine("Sending: {0}", data);
             SendData(_host, Convert.ToInt32(_port), HookChecks);
         }
 
