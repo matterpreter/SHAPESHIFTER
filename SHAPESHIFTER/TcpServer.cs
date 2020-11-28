@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 
@@ -45,11 +46,15 @@ namespace SHAPESHIFTER
                     // Loop to receive all the data sent by the client.
                     while ((i = stream.Read(bytes, 0, bytes.Length)) != 0)
                     {
-                        // Translate data bytes to a ASCII string.
-                        string data = BitConverter.ToString(bytes);
-                        //data = System.Text.Encoding.ASCII.GetString(bytes, 0, i);
-                        Console.WriteLine("Received: {0}", data);
-
+                        IList<string> hooks = Helpers.ResultsParser(bytes);
+                        if (hooks.Count != 0)
+                        {
+                            foreach(string hook in hooks)
+                            {
+                                Console.WriteLine("    [!] Hook detected on {0}!", hook);
+                            }
+                        }
+                        
 
                         //byte[] msg = System.Text.Encoding.ASCII.GetBytes(data);
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 
@@ -21,6 +22,42 @@ namespace SHAPESHIFTER
             const string charset = "abcdefghijklmnopqrstuvwxyz0123456789";
             char[] name = Enumerable.Repeat(charset, 12).Select(s => s[random.Next(s.Length)]).ToArray();
             return new string(name) + ".exe";
+        }
+
+        public static IList<string> ResultsParser(byte[] results)
+        {
+            IList<string> hookedFunctions = new List<string>();
+            string[] functions =
+            {
+                "NtClose",
+                "NtAllocateVirtualMemory",
+                "NtAllocateVirtualMemoryEx",
+                "NtCreateThread",
+                "NtCreateThreadEx",
+                "NtCreateUserProcess",
+                "NtFreeVirtualMemory",
+                "NtLoadDriver",
+                "NtMapViewOfSection",
+                "NtOpenProcess",
+                "NtProtectVirtualMemory",
+                "NtQueueApcThread",
+                "NtQueueApcThreadEx",
+                "NtResumeThread",
+                "NtSetContextThread",
+                "NtSetInformationProcess",
+                "NtSuspendThread",
+                "NtUnloadDriver",
+                "NtWriteVirtualMemory"
+            };
+
+            int i = 0;
+            foreach(byte result in results)
+            {
+                if(result == 1) hookedFunctions.Add(functions[i]);
+                i++;
+            }
+
+            return hookedFunctions;
         }
     }
 }
