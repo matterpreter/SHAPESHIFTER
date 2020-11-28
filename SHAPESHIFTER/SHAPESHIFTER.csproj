@@ -45,6 +45,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Compiler.cs" />
+    <Compile Include="Helpers.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TcpServer.cs" />
@@ -54,4 +56,8 @@
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>rmdir /Q /S $(TargetDir)Templates
+xcopy /E /I $(ProjectDir)Templates $(TargetDir)Templates</PostBuildEvent>
+  </PropertyGroup>
 </Project>

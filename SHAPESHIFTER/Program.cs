@@ -39,10 +39,11 @@ namespace SHAPESHIFTER
 
             if (_help)
             {
+                Compiler.CompileStage0("a", "b");
                 PrintUsage(options);
                 return;
             }
-            if (_host == String.Empty || _port == 0 || !ValidateIP(_host))
+            if (_host == String.Empty || _port == 0 || !Helpers.ValidateIP(_host))
             {
                 PrintUsage(options);
                 return;
@@ -61,13 +62,7 @@ namespace SHAPESHIFTER
             return;
         }
 
-        private static bool ValidateIP(string ip)
-        {
-            // Check if the string has 4 octets with Linq
-            if (ip.Count(d => d == '.') != 3) return false;
-            // Validate the IP
-            return IPAddress.TryParse(ip, out IPAddress addr);
-        }
+
 
 
     }
