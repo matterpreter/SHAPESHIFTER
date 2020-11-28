@@ -1,5 +1,9 @@
 ﻿using NDesk.Options;
 using System;
+using System.Linq;
+using System.Net;
+using System.Net.Sockets;
+using System.Threading;
 
 namespace SHAPESHIFTER
 {
@@ -11,6 +15,14 @@ namespace SHAPESHIFTER
 .__) ( ( / / /   (__ .__) ( ( _(_ (    (  (__ / \  
         ";
 
+        static void PrintUsage(OptionSet o)
+        {
+            Console.WriteLine("Usage: SHAPESHIFTER.exe [options]");
+            Console.WriteLine("\nOptions:");
+            o.WriteOptionDescriptions(Console.Out);
+            return;
+        }
+
         static void Main(string[] args)
         {
             bool _help = false;
@@ -19,47 +31,44 @@ namespace SHAPESHIFTER
 
             OptionSet options = new OptionSet()
             {
-                { "host=", "IP address or FQDN of your SHAPESHIFTER server", v => _host = v },
+                { "ip=", "IP address of your SHAPESHIFTER server. Must be quoted!", (string v)=> _host = v },
                 { "port=", "TCP port for the SHAPESHIFTER server", (int v) => _port = v },
                 { "h|help",  "Show this message and exit", v => _help = v != null },
             };
-            try
-            {
-                options.Parse(args);
-            }
-            catch (OptionException ex)
-            {
-                Console.WriteLine("[-] Error while parsing arguments {0}", ex.Message);
-                return;
-            }
+            options.Parse(args);
 
             if (_help)
             {
                 PrintUsage(options);
                 return;
             }
-
-            if (_host != String.Empty && _port != 0)
-            {
-                Console.WriteLine(banner);
-                Console.WriteLine("Host: {0}", _host);
-                Console.WriteLine("Host: {0}", _port);
-            }
-            else
+            if (_host == String.Empty || _port == 0 || !ValidateIP(_host))
             {
                 PrintUsage(options);
                 return;
             }
 
+            Console.WriteLine(banner, Console.ForegroundColor = ConsoleColor.DarkRed);
+            Console.ResetColor();
+
+            // Build the stage0 payload
+
+
+            // Start the TCP server
+            Thread tcpServer = new Thread(() => TcpServer.ServerInit(_host, _port));
+            tcpServer.Start();
+
             return;
         }
 
-        static void PrintUsage(OptionSet o)
+        private static bool ValidateIP(string ip)
         {
-            Console.WriteLine("Usage: SHAPESHIFTER.exe [options]");
-            Console.WriteLine("\nOptions:");
-            o.WriteOptionDescriptions(Console.Out);
-            return;
+            // Check if the string has 4 octets with Linq
+            if (ip.Count(d => d == '.') != 3) return false;
+            // Validate the IP
+            return IPAddress.TryParse(ip, out IPAddress addr);
         }
+
+
     }
 }
