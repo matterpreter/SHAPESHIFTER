@@ -51,7 +51,7 @@ namespace SHAPESHIFTER
                         {
                             foreach(string hook in hooks)
                             {
-                                Console.WriteLine("    [!] Hook detected on {0}!", hook);
+                                Console.WriteLine("[!] Hook detected on {0}!", hook.PadLeft(4));
                             }
                         }
                         
