@@ -31,13 +31,13 @@ namespace SHAPESHIFTER
 
 
                 server.Start();
-                Console.Write("[>] Server started on {0}:{1}...\n\n", ip, port);
+                Console.Write("[>] Server started on {0}:{1}...\n", ip, port);
                 while (true)
                 {
                     // Perform a blocking call to accept requests.
                     TcpClient client = server.AcceptTcpClient();
                     Guid clientId = Guid.NewGuid();
-                    Console.WriteLine("[+] New connection from {0} (ID: {1})", 
+                    Console.WriteLine("\n[+] New connection from {0} (ID: {1})", 
                         ((IPEndPoint)client.Client.RemoteEndPoint).Address.ToString(), clientId.ToString());
 
                     // Get a stream object for reading and writing
@@ -53,15 +53,21 @@ namespace SHAPESHIFTER
                         {
                             foreach(string hook in hooks)
                             {
-                                Console.WriteLine("[!] Hook detected on {0}!", hook.PadLeft(4));
+                                Console.WriteLine("  [!] Hook detected on {0}!", hook.PadLeft(4));
                             }
                         }
 
                         if (!Compiler.BuildStage1(hooks, shellcodeFile, clientId.ToString()))
                         {
-                            Console.WriteLine("[-] Failed to build Stage1");
+                            Console.WriteLine("  [-] Failed to generate Stage1 source file");
+                            break;
                         }
 
+                        if (!Compiler.CompileStage1(clientId.ToString()))
+                        {
+                            Console.WriteLine("  [-] Failed to compile Stage1");
+                            break;
+                        }
 
                         //byte[] msg = System.Text.Encoding.ASCII.GetBytes(data);
 

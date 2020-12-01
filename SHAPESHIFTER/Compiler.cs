@@ -154,5 +154,54 @@ namespace SHAPESHIFTER
             }
         }
 
+        public static bool CompileStage1(string clientId)
+        {
+            string sourcePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            string sourceFile = sourcePath + @"\BuiltStages\" + clientId + ".cs";
+
+            if (!File.Exists(sourceFile))
+            {
+                Console.WriteLine("  [-] Can't find the generated Stage1 source file. Make sure that {0} exists", sourceFile);
+                return false;
+            }
+
+            string outputFileName = Helpers.GenerateRandomFileName();
+            CodeDomProvider provider = CodeDomProvider.CreateProvider("CSharp");
+            Console.WriteLine(sourcePath + @"\BuiltStages\" + outputFileName);
+            CompilerParameters cParams = new CompilerParameters
+            {
+                GenerateExecutable = true,
+                OutputAssembly = sourcePath + @"\BuiltStages\" + outputFileName,
+                IncludeDebugInformation = false,
+                GenerateInMemory = false,
+                WarningLevel = 0, // No warnings means no bugs, right?
+                TreatWarningsAsErrors = false,
+                CompilerOptions = " /unsafe",
+                TempFiles = new TempFileCollection(".", false),
+                MainClass = "Stage1.Program"
+            };
+            cParams.ReferencedAssemblies.Add("System.dll");
+            cParams.ReferencedAssemblies.Add("System.Core.dll");
+            cParams.ReferencedAssemblies.Add("System.Data.dll");
+            cParams.ReferencedAssemblies.Add("System.Net.dll");
+            cParams.ReferencedAssemblies.Add("System.Xml.dll");
+            cParams.ReferencedAssemblies.Add("System.Xml.Linq.dll");
+
+            CompilerResults results = provider.CompileAssemblyFromFile(cParams, sourceFile);
+            if (results.Errors.Count == 0)
+            {
+                Console.WriteLine("  [+] Stage1 compiled into {0}", outputFileName);
+            }
+            else
+            {
+                Console.WriteLine("  [-] Error during Stage1 compilation");
+                foreach (CompilerError e in results.Errors)
+                {
+                    Console.WriteLine("    {0}", e.ToString());
+                }
+                return false;
+            }
+            return true;
+        }
     }
 }

