@@ -29,8 +29,9 @@
                 fixed (byte* ptr = syscall)
                 {
                     IntPtr memoryAddress = (IntPtr)ptr;
+                    uint oldprotect = 0;
 
-                    if (!PInvokes.VirtualProtectEx(Process.GetCurrentProcess().Handle, memoryAddress, (UIntPtr)syscall.Length, 0x40, out uint oldprotect))
+                    if (!PInvokes.VirtualProtectEx(Process.GetCurrentProcess().Handle, memoryAddress, (UIntPtr)syscall.Length, 0x40, out oldprotect))
                     {
                         throw new Win32Exception();
                     }
@@ -101,8 +102,9 @@
                 fixed (byte* ptr = syscall)
                 {
                     IntPtr memoryAddress = (IntPtr)ptr;
+                    uint oldprotect = 0;
 
-                    if (!PInvokes.VirtualProtectEx(Process.GetCurrentProcess().Handle, memoryAddress, (UIntPtr)syscall.Length, 0x40, out uint oldprotect))
+                    if (!PInvokes.VirtualProtectEx(Process.GetCurrentProcess().Handle, memoryAddress, (UIntPtr)syscall.Length, 0x40, out oldprotect))
                     {
                         throw new Win32Exception();
                     }

@@ -167,7 +167,6 @@ namespace SHAPESHIFTER
 
             string outputFileName = Helpers.GenerateRandomFileName();
             CodeDomProvider provider = CodeDomProvider.CreateProvider("CSharp");
-            Console.WriteLine(sourcePath + @"\BuiltStages\" + outputFileName);
             CompilerParameters cParams = new CompilerParameters
             {
                 GenerateExecutable = true,
