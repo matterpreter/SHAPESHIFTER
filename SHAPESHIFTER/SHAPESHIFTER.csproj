@@ -59,6 +59,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>rmdir /Q /S $(TargetDir)Templates
-xcopy /E /I $(ProjectDir)Templates $(TargetDir)Templates</PostBuildEvent>
+xcopy /E /I $(ProjectDir)Templates $(TargetDir)Templates
+if not exist $(TargetDir)BuiltStages mkdir $(TargetDir)BuiltStages</PostBuildEvent>
   </PropertyGroup>
 </Project>

@@ -15,10 +15,10 @@ namespace Stage1
 
 
             Console.WriteLine("Allocating memory...");
-            //[SHAPESHIFTER_MEMALLOC]
+            [SHAPESHIFTER_MEMALLOC]
 
             Console.WriteLine("Writing to the buffer (0x{0:X} bytes)", payload.Length);
-            //[SHAPESHIFTER_WRITEVM]
+            [SHAPESHIFTER_WRITEVM]
 
             Console.WriteLine("Creating thread...");
             uint threadID = 0;
@@ -54,16 +54,16 @@ namespace Stage1
         [DllImport("kernel32.dll", SetLastError = true)]
         public static extern uint WaitForSingleObject(IntPtr hHandle, UInt32 dwMilliseconds);
 
-        //[SHAPESHIFTER_PINVOKES]
+        [SHAPESHIFTER_PINVOKES]
     }
 
     class Syscalls
     {
-        //[SHAPESHIFTER_SYSCALLS]
+        [SHAPESHIFTER_SYSCALLS]
 
         public struct Delegates
         {
-            //[SHAPESHIFTER_DELEGATES]
+            [SHAPESHIFTER_DELEGATES]
         }
     }
 }

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-
+using System.Text;
 
 namespace SHAPESHIFTER
 {
@@ -58,6 +58,15 @@ namespace SHAPESHIFTER
             }
 
             return hookedFunctions;
+        }
+
+        public static string ByteArrayToFormattedString(byte[] array)
+        {
+            StringBuilder formatted = new StringBuilder(BitConverter.ToString(array).Replace("-", ", 0x"));
+            formatted.Insert(0, "0x");
+
+            return formatted.ToString();
+            
         }
     }
 }
