@@ -154,7 +154,7 @@ namespace SHAPESHIFTER
             }
         }
 
-        public static bool CompileStage1(string clientId)
+        public static byte[] CompileStage1(string clientId)
         {
             string sourcePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             string sourceFile = sourcePath + @"\BuiltStages\" + clientId + ".cs";
@@ -162,7 +162,7 @@ namespace SHAPESHIFTER
             if (!File.Exists(sourceFile))
             {
                 Console.WriteLine("  [-] Can't find the generated Stage1 source file. Make sure that {0} exists", sourceFile);
-                return false;
+                return null;
             }
 
             string outputFileName = Helpers.GenerateRandomFileName();
@@ -198,9 +198,10 @@ namespace SHAPESHIFTER
                 {
                     Console.WriteLine("    {0}", e.ToString());
                 }
-                return false;
+                return null;
             }
-            return true;
+
+            return File.ReadAllBytes(sourcePath + @"\BuiltStages\" + outputFileName);
         }
     }
 }

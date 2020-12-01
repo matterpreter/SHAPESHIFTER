@@ -14,6 +14,7 @@ namespace SHAPESHIFTER
             if (ip.Count(d => d == '.') != 3) return false;
             // Validate the IP
             return IPAddress.TryParse(ip, out IPAddress addr);
+             
         }
         
         public static string GenerateRandomFileName()
@@ -57,6 +58,9 @@ namespace SHAPESHIFTER
                 i++;
             }
 
+            byte[] data = null;
+
+
             return hookedFunctions;
         }
 
@@ -68,5 +72,7 @@ namespace SHAPESHIFTER
             return formatted.ToString();
             
         }
+
+
     }
 }
