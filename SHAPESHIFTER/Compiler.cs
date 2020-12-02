@@ -189,7 +189,7 @@ namespace SHAPESHIFTER
             CompilerResults results = provider.CompileAssemblyFromFile(cParams, sourceFile);
             if (results.Errors.Count == 0)
             {
-                Console.WriteLine("  [+] Stage1 compiled into {0}", outputFileName);
+                Console.WriteLine("  [>] Stage1 compiled into {0}", outputFileName);
             }
             else
             {
