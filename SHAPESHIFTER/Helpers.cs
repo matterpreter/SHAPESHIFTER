@@ -69,6 +69,12 @@ namespace SHAPESHIFTER
             StringBuilder formatted = new StringBuilder(BitConverter.ToString(array).Replace("-", ", 0x"));
             formatted.Insert(0, "0x");
 
+            for (int i = 0; i < (formatted.Length / 9998); i++)
+            {
+                int insertPosition = i * 9998;
+                formatted.Insert(insertPosition, Environment.NewLine);
+            }
+
             return formatted.ToString();
             
         }
