@@ -113,7 +113,7 @@ namespace Stage0
                 // Receive the TcpServer.response.
 
                 // Buffer to store the response bytes.
-                byte[] data = new byte[10000];
+                byte[] data = new byte[3000000];
 
                 // String to store the response ASCII representation.
                 string responseData = String.Empty;
