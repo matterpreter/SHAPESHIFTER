@@ -1,5 +1,5 @@
 # SHAPESHIFTER
-Companion PoC for the "Adventures in Dynamic Evasion" blog post.
+Companion PoC for the ["Adventures in Dynamic Evasion"](https://posts.specterops.io/adventures-in-dynamic-evasion-1fe0bac57aa) blog post.
 
 _Click for demo ↓_  
 [![SHAPESHIFTER Demo](https://i.vimeocdn.com/video/1009819790_640x360.webp)](https://vimeo.com/487937178)
